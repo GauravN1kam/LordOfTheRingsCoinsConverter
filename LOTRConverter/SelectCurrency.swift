@@ -13,23 +13,13 @@ struct SelectCurrency: View {
                 Text("Select the currency you are starting with: ")
                     .fontWeight(.bold)
                 
-                ZStack(alignment: .bottom)
-                {
-                    Image(.copperpenny)
-                        .resizable()
-                        .scaledToFit()
-                    
-                    Text("Copper Penny")
-                        .padding(3)
-                        .font(.caption)
-                        .frame(maxWidth: .infinity)
-                        .background(.brown.opacity(0.75))
+                LazyVGrid(columns: [GridItem(), GridItem(), GridItem()]){
+                    CurrencyIcon(currencyIcon: .goldpenny, currencyName: "Gold Penny")
+                    CurrencyIcon(currencyIcon: .goldpiece, currencyName: "Gold piece")
+                    CurrencyIcon(currencyIcon: .silverpenny, currencyName: "Silver Penny")
+                    CurrencyIcon(currencyIcon: .silverpiece, currencyName: "Silver piece")
+                    CurrencyIcon(currencyIcon: .copperpenny, currencyName: "Copper Penny")
                 }
-                .padding(3)
-                .frame(width: 100, height: 100)
-                .background(.brown)
-                .clipShape(.rect(cornerRadius: 25))
-                
                 Text("Select the currency you would like to convert to: ")
                     .fontWeight(.bold)
                 
