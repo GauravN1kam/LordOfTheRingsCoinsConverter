@@ -3,8 +3,13 @@ import SwiftUI
 struct ContentView: View {
     
     @State var showExchangeInfo: Bool = false
+    @State var showSelectCurrency: Bool = false
+    @FocusState var leftTyping
+    @FocusState var rightTyping
     @State var leftAmount: String = ""
     @State var rightAmount: String = ""
+    @State var leftCurrency: Currency = .silverPiece
+    @State var rightCurrency: Currency = .goldPiece
     
     var body: some View {
         ZStack{
@@ -26,17 +31,26 @@ struct ContentView: View {
                     VStack {
                         
                         HStack {
-                            Image(.silverpiece)
+                            Image(leftCurrency.image)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 33)
-                            Text("Silver Piece")
+                            Text(leftCurrency.name)
                                 .font(.headline)
                                 .foregroundStyle(.white)
                         }
                         .padding(.bottom, -5)
+                        .onTapGesture {
+                            showSelectCurrency.toggle()
+                        }
                         TextField("Amount", text: $leftAmount)
                             .textFieldStyle(.roundedBorder)
+                            .focused($leftTyping)
+                            .onChange(of: leftAmount){
+                                if leftTyping {
+                                    rightAmount = leftCurrency.convert(amountString: leftAmount, currency: rightCurrency)
+                                }
+                            }
                     }
                     Image(systemName: "equal")
                         .font(.largeTitle)
@@ -45,24 +59,34 @@ struct ContentView: View {
                     
                     VStack {
                         HStack {
-                            Text("Gold Piece")
+                            Text(rightCurrency.name)
                                 .font(.headline)
                                 .foregroundStyle(.white)
-                            Image(.goldpenny)
+                            Image(rightCurrency.image)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 33)
                             
                         }
                         .padding(.bottom, -5)
+                        .onTapGesture {
+                            showSelectCurrency.toggle()
+                        }
                         TextField("Amount", text: $rightAmount)
                             .textFieldStyle(.roundedBorder)
                             .multilineTextAlignment(.trailing)
+                            .focused($rightTyping)
+                            .onChange(of: rightAmount){
+                                if rightTyping {
+                                    leftAmount = rightCurrency.convert(amountString: rightAmount, currency: leftCurrency)
+                                }
+                            }
                     }
                 }
                 .padding()
                 .background(.black.opacity(0.5))
                 .clipShape(.capsule)
+                .keyboardType(.decimalPad)
                 Spacer()
                 
                 HStack {
@@ -75,10 +99,14 @@ struct ContentView: View {
                     .font(.largeTitle)
                     .foregroundStyle(Color.white)
                     .padding(.trailing)
-                    .sheet(isPresented: $showExchangeInfo){
-                        ExchangeInfo()
-                    }
+                    
                 }
+            }
+            .sheet(isPresented: $showExchangeInfo){
+                ExchangeInfo()
+            }
+            .sheet(isPresented: $showSelectCurrency){
+                SelectCurrency(topCurrency: $leftCurrency, bottomCurrency: $rightCurrency)
             }
         }
     }
