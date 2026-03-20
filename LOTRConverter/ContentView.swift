@@ -13,7 +13,6 @@ struct ContentView: View {
     
     var body: some View {
         ZStack{
-            //Background Image
             Image(.background)
                 .resizable()
                 .ignoresSafeArea()
